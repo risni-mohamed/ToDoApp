@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | Todo App</title>
+<style>
+  body { font-family:'Poppins',sans-serif; background:#f0f2f5; margin:0; padding:0;}
+  .container { max-width:700px; margin:40px auto; padding:20px; }
+  .header { display:flex; justify-content: space-between; align-items:center; margin-bottom:20px; }
+  h2 { color:#1f2937; font-size:1.8rem; margin:0; }
+  a.logout { text-decoration:none; color:#ef4444; font-weight:500; }
+  a.logout:hover { text-decoration:underline; }
+
+  form.add-task { display:flex; gap:10px; margin-bottom:25px; flex-wrap:wrap; }
+  form.add-task input { flex:1; padding:12px; border-radius:10px; border:1px solid #d1d5db; outline:none; }
+  form.add-task input:focus { border-color:#4f46e5; box-shadow:0 0 8px rgba(79,70,229,0.3);}
+  form.add-task button { padding:12px 20px; border:none; border-radius:10px; background:#4f46e5; color:white; font-weight:600; cursor:pointer; transition:0.3s; }
+  form.add-task button:hover { background:#4338ca; transform:scale(1.05); }
+
+  .task-list { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+  @media(max-width:600px) { .task-list { grid-template-columns:1fr; } }
+
+  .task-card { 
+    background:white; padding:15px 20px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    display:flex; justify-content:space-between; align-items:center; transition:0.3s, opacity 0.5s;
+    opacity:0; transform:translateY(10px);
+    animation: fadeIn 0.5s forwards;
+  }
+
+  @keyframes fadeIn {
+    to { opacity:1; transform:translateY(0);}
+  }
+
+  .task-title { font-size:1rem; color:#1f2937; transition:0.3s; }
+  .task-title.completed { text-decoration:line-through; color:gray; opacity:0.7; }
+
+  .task-actions a { text-decoration:none; padding:6px 12px; border-radius:8px; color:white; font-weight:500; margin-left:5px; transition:0.3s; font-size:0.85rem; }
+  .task-actions a.complete { background:#10b981; }
+  .task-actions a.complete:hover { background:#059669; transform:scale(1.05);}
+  .task-actions a.delete { background:#ef4444; }
+  .task-actions a.delete:hover { background:#dc2626; transform:scale(1.05);}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2>Welcome, {{ request.user.username }}</h2>
+        <a href="{% url 'welcome' %}" class="logout">Logout</a>
+    </div>
+
+    <form method="post" class="add-task">
+        {% csrf_token %}
+        <input type="text" name="title" placeholder="Add new task" required>
+        <button type="submit">Add Task</button>
+    </form>
+
+    <div class="task-list">
+        {% for task in tasks %}
+        <div class="task-card">
+            <span class="task-title {% if task.completed %}completed{% endif %}">{{ task.title }}</span>
+            <div class="task-actions">
+                {% if not task.completed %}
+                <a href="{% url 'complete_task' task.id %}" class="complete">Complete</a>
+                {% endif %}
+                <a href="{% url 'delete_task' task.id %}" class="delete">Delete</a>
+            </div>
+        </div>
+        {% empty %}
+        <p style="grid-column:1/-1; text-align:center; color:#6b7280;">No tasks yet.</p>
+        {% endfor %}
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register | Todo App</title>
+<style>
+  body { font-family:'Poppins',sans-serif; height:100vh; margin:0; display:flex; justify-content:center; align-items:center;
+    background: linear-gradient(135deg,#667eea,#764ba2); overflow:hidden;}
+  .card {
+    background:white; padding:50px 35px; border-radius:20px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.2); max-width:400px; width:90%; text-align:center;
+    position:relative; z-index:1;
+  }
+  h2 { font-size:2rem; margin-bottom:25px; color:#1f2937; }
+  .input-group { margin-bottom:20px; position:relative; }
+  .input-group input {
+    width:100%; padding:12px 15px; border:1px solid #d1d5db; border-radius:12px; font-size:16px;
+    outline:none; transition:0.3s;
+  }
+  .input-group input:focus { border-color:#4f46e5; box-shadow:0 0 10px rgba(79,70,229,0.3); }
+  .btn { width:100%; padding:12px; border:none; border-radius:12px; color:white; font-weight:600;
+    background:linear-gradient(135deg,#f0932b,#eb4d4b); cursor:pointer; transition:0.3s; }
+  .btn:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(240,147,59,0.4);}
+  .login-link { display:block; margin-top:12px; color:#4f46e5; text-decoration:none; font-weight:500; }
+  .login-link:hover { text-decoration:underline; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h2>Create Account</h2>
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="input-group">
+          {{ field|attr:"placeholder:"|add:field.label }}
+          {{ field }}
+          {% if field.errors %}
+            <ul style="color:red; margin:5px 0 10px 0; list-style:none; padding:0;">
+              {% for error in field.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      {% endfor %}
+      <button type="submit" class="btn">Register</button>
+    </form>
+    <a href="{% url 'login' %}" class="login-link">Already have an account? Login</a>
+    <a href="{% url 'welcome' %}" class="login-link">Back to Welcome Page</a>
+  </div>
+</body>
+</html>
